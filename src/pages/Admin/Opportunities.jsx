@@ -77,7 +77,7 @@ const AdminOpportunities = () => {
 
     try {
       const response = await axios.post(
-        "https://41f12c2701f1.ngrok-free.app/api/admin/job-post",
+        "https://293c1a2ee6ac.ngrok-free.app/api/admin/job-post",
         form,
         { headers: { "ngrok-skip-browser-warning": "true" } }
       );
@@ -115,7 +115,7 @@ const AdminOpportunities = () => {
   const getoppo = async () => {
     try {
       const response = await axios.get(
-        "https://41f12c2701f1.ngrok-free.app/api/admin/get-jobs",
+        "https://293c1a2ee6ac.ngrok-free.app/api/admin/get-jobs",
         { headers: { "ngrok-skip-browser-warning": "true" } }
       );
       setOpportunities(response.data);

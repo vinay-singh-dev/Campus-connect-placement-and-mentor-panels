@@ -18,7 +18,6 @@ import { X } from "lucide-react";
 const CARD_COLORS = ["#4ADE80", "#FACC15", "#F87171", "#60A5FA", "#A78BFA"];
 const PIE_COLORS = ["#4ADE80", "#FACC15", "#F87171", "#60A5FA", "#A78BFA"];
 
-
 const pieData = [
   { name: "Computer Science", value: 95 },
   { name: "Electronics", value: 72 },
@@ -35,19 +34,16 @@ const departments = [
   { name: "IT", placed: 53, total: 80 },
 ];
 
-
 const upcomingDeadlinesData = [
   { name: "TechCorp Internship", date: "2025-09-23" },
   { name: "InnovateTech Placement", date: "2025-09-29" },
 ];
-
 
 const recentActivitiesData = [
   "📌 New application from John Smith for TechCorp internship",
   "📌 Interview scheduled for Emily Davis at InnovateTech",
   "📌 Mentor approval pending for 5 applications",
 ];
-
 
 const exampleTrendData = [
   { month: "May", value: 10 },
@@ -66,7 +62,7 @@ const AdminDashboard = () => {
   const getUserData = async () => {
     try {
       const response = await axios.get(
-        "https://41f12c2701f1.ngrok-free.app/api/admin/get-static",
+        "https://293c1a2ee6ac.ngrok-free.app/api/admin/get-static",
         { headers: { "ngrok-skip-browser-warning": "true" } }
       );
       setData(response.data.stats);
@@ -102,7 +98,7 @@ const AdminDashboard = () => {
         Placement Cell Dashboard
       </h2>
 
-      {}
+      {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-6 gap-6 mb-6">
         {sdata.length
           ? sdata.map((stat, idx) => (
@@ -143,7 +139,7 @@ const AdminDashboard = () => {
             ))}
       </div>
 
-      {}
+      {/* Department Placement & Pie Chart */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <div className="bg-card dark:bg-darkCard p-6 rounded-2xl shadow-card hover:scale-105 transition transform cursor-pointer">
           <h3 className="font-semibold text-secondary dark:text-darkSecondary mb-4">
@@ -176,7 +172,6 @@ const AdminDashboard = () => {
           </ul>
         </div>
 
-        {}
         <div className="bg-card dark:bg-darkCard p-6 rounded-2xl shadow-card hover:scale-105 transition transform cursor-pointer">
           <h3 className="font-semibold text-secondary dark:text-darkSecondary mb-4">
             Placement Statistics
@@ -199,10 +194,23 @@ const AdminDashboard = () => {
               <Tooltip />
             </PieChart>
           </ResponsiveContainer>
+
+          {/* Legend below Pie Chart */}
+          <div className="mt-4 flex flex-wrap gap-4">
+            {(sdata.length ? sdata : pieData).map((dept, idx) => (
+              <div key={idx} className="flex items-center space-x-2">
+                <div
+                  className="w-4 h-4 rounded"
+                  style={{ backgroundColor: PIE_COLORS[idx % PIE_COLORS.length] }}
+                />
+                <span className="text-sm text-gray-900 dark:text-gray-100">{dept.name}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
-      {}
+      {/* Recent Activity & Deadlines */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-card dark:bg-darkCard p-6 rounded-2xl shadow-card hover:scale-105 transition transform cursor-pointer">
           <h3 className="font-semibold text-secondary dark:text-darkSecondary mb-4">
@@ -232,7 +240,7 @@ const AdminDashboard = () => {
         </div>
       </div>
 
-      {}
+      {/* Modal for stats details */}
       {modalOpen && selectedStat && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-card w-full max-w-lg p-6 relative">
@@ -260,9 +268,10 @@ const AdminDashboard = () => {
               </li>
             </ul>
 
-            {}
             <div>
-              <h4 className="text-sm font-medium mb-2 text-gray-800 dark:text-gray-100">Last 5 Months Trend</h4>
+              <h4 className="text-sm font-medium mb-2 text-gray-800 dark:text-gray-100">
+                Last 5 Months Trend
+              </h4>
               <ResponsiveContainer width="100%" height={100}>
                 <LineChart data={exampleTrendData}>
                   <XAxis dataKey="month" hide />
