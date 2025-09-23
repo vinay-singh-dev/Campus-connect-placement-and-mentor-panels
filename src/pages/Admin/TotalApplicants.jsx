@@ -17,7 +17,7 @@ const AdminApplications = () => {
   const getApplications = async () => {
     try {
       const response = await axios.get(
-        "https://fb2e398f1311.ngrok-free.app/api/admin/get-applications",
+        `${import.meta.env.VITE_API_URL}/admin/get-applications`,
         { headers: { "ngrok-skip-browser-warning": "true" } }
       );
       if (response.data.success) {
@@ -39,7 +39,7 @@ const AdminApplications = () => {
   const getApplicationDetails = async (applicationId) => {
     try {
       const response = await axios.get(
-        `https://fb2e398f1311.ngrok-free.app/api/admin/get-applications/${applicationId}`,
+        `${import.meta.env.VITE_API_URL}/admin/get-applications/${applicationId}`,
         { headers: { "ngrok-skip-browser-warning": "true" } }
       );
       if (response.data) setSelectedAppDetails(response.data);

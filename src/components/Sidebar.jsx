@@ -8,10 +8,12 @@ const Sidebar = ({ role }) => {
   const location = useLocation();
   const { darkMode } = useContext(DarkModeContext);
 
+  // ✅ Updated Admin Menu
   const adminMenu = [
     { name: "Dashboard", path: "/admin/dashboard" },
     { name: "Opportunities", path: "/admin/opportunities" },
-    { name: "Applications", path: "/admin/applications" },
+    { name: "Total Applicants", path: "/admin/applications" }, // renamed
+    { name: "Applied Students", path: "/admin/applied-students" }, // new section
     { name: "Reports", path: "/admin/reports" },
   ];
 
@@ -26,7 +28,7 @@ const Sidebar = ({ role }) => {
 
   return (
     <>
-      {}
+      {/* Mobile Toggle Button */}
       <button
         className={`m-4 p-2 rounded-md lg:hidden z-50 relative transition-colors
           ${darkMode ? "bg-darkPrimary text-darkSecondary" : "bg-gray-800 text-white"}`}
@@ -35,7 +37,7 @@ const Sidebar = ({ role }) => {
         <Menu />
       </button>
 
-      {}
+      {/* Sidebar */}
       <div
         className={`fixed top-0 left-0 h-full w-64
           ${darkMode ? "bg-darkCard border-darkMuted text-darkSecondary" : "bg-white border-gray-200 text-secondary"}

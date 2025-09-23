@@ -62,7 +62,7 @@ const AdminDashboard = () => {
   const getUserData = async () => {
     try {
       const response = await axios.get(
-        "https://fb2e398f1311.ngrok-free.app/api/api/admin/get-static",
+        `${import.meta.env.VITE_API_URL}/admin/get-static`,
         { headers: { "ngrok-skip-browser-warning": "true" } }
       );
       setData(response.data.stats);
