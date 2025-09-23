@@ -30,7 +30,7 @@ const Reports = () => {
       >
         <h1 className={`text-2xl font-bold mb-6 ${darkMode ? "text-white" : "text-gray-800"}`}>Reports</h1>
 
-        {/* Buttons */}
+        {}
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
           <button
             onClick={downloadAllApplications}
@@ -51,7 +51,7 @@ const Reports = () => {
           </button>
         </div>
 
-        {/* Cards */}
+        {}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {applications.map((app, idx) => (
             <div

@@ -6,7 +6,7 @@ import axios from "axios";
 const AdminOpportunities = () => {
   const [opportunities, setOpportunities] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
-  const [selectedCard, setSelectedCard] = useState(null); // for expanded card view
+  const [selectedCard, setSelectedCard] = useState(null); 
   const [form, setForm] = useState({
     job_type: "",
     title: "",
@@ -22,7 +22,7 @@ const AdminOpportunities = () => {
   });
   const [editingIndex, setEditingIndex] = useState(null);
 
-  // ✅ Helpers
+  
   const formatDate = (dateStr) => {
     if (!dateStr) return "N/A";
     const date = new Date(dateStr);
@@ -52,7 +52,7 @@ const AdminOpportunities = () => {
     return "bg-gray-500";
   };
 
-  // ✅ Handlers
+ 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -77,7 +77,7 @@ const AdminOpportunities = () => {
 
     try {
       const response = await axios.post(
-        "https://293c1a2ee6ac.ngrok-free.app/api/admin/job-post",
+        "https://fb2e398f1311.ngrok-free.app/api/admin/job-post",
         form,
         { headers: { "ngrok-skip-browser-warning": "true" } }
       );
@@ -115,7 +115,7 @@ const AdminOpportunities = () => {
   const getoppo = async () => {
     try {
       const response = await axios.get(
-        "https://293c1a2ee6ac.ngrok-free.app/api/admin/get-jobs",
+        "https://fb2e398f1311.ngrok-free.app/api/admin/get-jobs",
         { headers: { "ngrok-skip-browser-warning": "true" } }
       );
       setOpportunities(response.data);
@@ -142,7 +142,7 @@ const AdminOpportunities = () => {
 
   return (
     <Layout role="admin">
-      {/* Header */}
+      {}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
           Manage Opportunities
@@ -155,7 +155,7 @@ const AdminOpportunities = () => {
         </button>
       </div>
 
-      {/* Modal Form */}
+      {}
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-card w-full max-w-2xl p-6 relative">
@@ -253,7 +253,7 @@ const AdminOpportunities = () => {
         </div>
       )}
 
-      {/* Opportunities Cards */}
+      {}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {opportunities.length === 0 ? (
           <p className="text-gray-500 dark:text-gray-400">No opportunities posted yet.</p>
@@ -316,7 +316,7 @@ const AdminOpportunities = () => {
         )}
       </div>
 
-      {/* Expanded Card Modal */}
+      {}
       {selectedCard !== null && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"

@@ -62,7 +62,7 @@ const AdminDashboard = () => {
   const getUserData = async () => {
     try {
       const response = await axios.get(
-        "https://293c1a2ee6ac.ngrok-free.app/api/admin/get-static",
+        "https://fb2e398f1311.ngrok-free.app/api/api/admin/get-static",
         { headers: { "ngrok-skip-browser-warning": "true" } }
       );
       setData(response.data.stats);
@@ -98,7 +98,7 @@ const AdminDashboard = () => {
         Placement Cell Dashboard
       </h2>
 
-      {/* Stats Cards */}
+      {}
       <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-6 gap-6 mb-6">
         {sdata.length
           ? sdata.map((stat, idx) => (
@@ -139,7 +139,7 @@ const AdminDashboard = () => {
             ))}
       </div>
 
-      {/* Department Placement & Pie Chart */}
+      {}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <div className="bg-card dark:bg-darkCard p-6 rounded-2xl shadow-card hover:scale-105 transition transform cursor-pointer">
           <h3 className="font-semibold text-secondary dark:text-darkSecondary mb-4">
@@ -195,7 +195,7 @@ const AdminDashboard = () => {
             </PieChart>
           </ResponsiveContainer>
 
-          {/* Legend below Pie Chart */}
+          {}
           <div className="mt-4 flex flex-wrap gap-4">
             {(sdata.length ? sdata : pieData).map((dept, idx) => (
               <div key={idx} className="flex items-center space-x-2">
@@ -210,7 +210,7 @@ const AdminDashboard = () => {
         </div>
       </div>
 
-      {/* Recent Activity & Deadlines */}
+      {}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-card dark:bg-darkCard p-6 rounded-2xl shadow-card hover:scale-105 transition transform cursor-pointer">
           <h3 className="font-semibold text-secondary dark:text-darkSecondary mb-4">
@@ -240,7 +240,7 @@ const AdminDashboard = () => {
         </div>
       </div>
 
-      {/* Modal for stats details */}
+      {}
       {modalOpen && selectedStat && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-card w-full max-w-lg p-6 relative">

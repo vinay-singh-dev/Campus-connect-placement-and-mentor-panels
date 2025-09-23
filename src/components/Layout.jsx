@@ -13,20 +13,20 @@ const Layout = ({ children, role }) => {
 
   return (
     <div className={`flex min-h-screen ${darkMode ? "bg-darkBackground text-darkSecondary" : "bg-background text-secondary"}`}>
-      {/* Sidebar */}
+      {}
       <div className="hidden lg:block fixed top-0 left-0 h-full w-64">
         <Sidebar role={role} />
       </div>
 
-      {/* Main content */}
+      {}
       <div className="flex-1 lg:ml-64">
-        {/* Navbar with Dark Mode Toggle */}
+        {}
         <Navbar
           role={role}
           toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
           onLogout={handleLogout}
         >
-          {/* Optional: place toggle button in Navbar */}
+          {}
           <button
             onClick={toggleDarkMode}
             className="ml-4 px-4 py-2 rounded-xl bg-primary text-white hover:bg-primary/90 dark:bg-darkPrimary dark:text-darkSecondary"

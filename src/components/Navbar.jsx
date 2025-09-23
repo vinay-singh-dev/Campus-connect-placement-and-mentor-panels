@@ -10,17 +10,17 @@ const Navbar = ({ role, toggleSidebar, onLogout }) => {
       className={`flex justify-between items-center px-4 py-2 fixed top-0 left-0 right-0 z-50 shadow transition-colors
         ${darkMode ? "bg-darkCard text-darkSecondary" : "bg-white text-secondary"}`}
     >
-      {/* Left: Sidebar toggle + logo + dark mode */}
+      {}
       <div className="flex items-center space-x-3">
-        {/* Sidebar Toggle */}
+        {}
         <button onClick={toggleSidebar} className="lg:hidden">
           <FiMenu size={24} />
         </button>
 
-        {/* Logo + Titles */}
+        {}
         <div className="flex flex-col justify-center">
           <div className="flex items-center space-x-2">
-            {/* Graduation Cap Icon */}
+            {}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -36,19 +36,19 @@ const Navbar = ({ role, toggleSidebar, onLogout }) => {
               <path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"></path>
             </svg>
 
-            {/* Main Title */}
+            {}
             <span className={`font-bold text-xl sm:text-2xl ${darkMode ? "text-white" : "text-blue-600"}`}>
               Campus Connect
             </span>
           </div>
 
-          {/* Subtitle */}
+          {}
           <span className={`text-sm sm:text-base ${darkMode ? "text-darkSecondary" : "text-gray-700"} ml-8`}>
             {role === "admin" ? "Placement Officer Panel" : "Mentor Panel"}
           </span>
         </div>
 
-        {/* Dark/Light Mode Toggle */}
+        {}
         <button
           onClick={toggleDarkMode}
           className="ml-3 p-1.5 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition"
@@ -61,7 +61,7 @@ const Navbar = ({ role, toggleSidebar, onLogout }) => {
         </button>
       </div>
 
-      {/* Middle: Search */}
+      {}
       <div className="hidden md:flex items-center w-1/3">
         <div className="flex w-full">
           <input
@@ -81,7 +81,7 @@ const Navbar = ({ role, toggleSidebar, onLogout }) => {
         </div>
       </div>
 
-      {/* Right: Logout */}
+      {}
       <div className="flex items-center">
         <button
           onClick={onLogout}

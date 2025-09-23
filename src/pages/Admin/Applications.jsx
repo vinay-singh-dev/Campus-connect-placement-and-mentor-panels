@@ -11,12 +11,13 @@ const AdminApplications = () => {
   const { darkMode } = useContext(DarkModeContext);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 6;
+  const itemsPerPage = 
+  6;
 
   const getApplications = async () => {
     try {
       const response = await axios.get(
-        "https://293c1a2ee6ac.ngrok-free.app/api/admin/get-applications",
+        "https://fb2e398f1311.ngrok-free.app/api/admin/get-applications",
         { headers: { "ngrok-skip-browser-warning": "true" } }
       );
       if (response.data.success) {
@@ -38,7 +39,7 @@ const AdminApplications = () => {
   const getApplicationDetails = async (applicationId) => {
     try {
       const response = await axios.get(
-        `https://293c1a2ee6ac.ngrok-free.app/api/admin/get-applications/${applicationId}`,
+        `https://fb2e398f1311.ngrok-free.app/api/admin/get-applications/${applicationId}`,
         { headers: { "ngrok-skip-browser-warning": "true" } }
       );
       if (response.data) setSelectedAppDetails(response.data);
@@ -60,17 +61,17 @@ const AdminApplications = () => {
     currentPage * itemsPerPage
   );
 
-  // Update status in frontend & backend
+  
   const handleStatusChange = async (applicationId, newStatus) => {
     try {
-      // Update backend
+      
       await axios.put(
-        "https://293c1a2ee6ac.ngrok-free.app/api/admin/update-application-status",
+        "https://fb2e398f1311.ngrok-free.app/api/admin/update-application-status",
         { application_id: applicationId, status: newStatus },
         { headers: { "ngrok-skip-browser-warning": "true" } }
       );
 
-      // Update frontend state
+     
       setApplications((prev) =>
         prev.map((app) =>
           app.id === applicationId ? { ...app, status: newStatus } : app
@@ -132,7 +133,7 @@ const AdminApplications = () => {
         )}
       </div>
 
-      {/* Pagination Buttons (same as before) */}
+      {}
 
       {selectedCard !== null && selectedAppDetails && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={() => setSelectedCard(null)}>

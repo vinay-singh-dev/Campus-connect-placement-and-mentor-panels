@@ -2,12 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Light mode defaults */
+
 html, body {
   @apply font-sans bg-background text-secondary;
 }
 
-/* Dark mode */
+
 html.dark, body.dark {
   @apply bg-darkBackground text-darkSecondary;
 }

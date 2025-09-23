@@ -26,7 +26,7 @@ const Sidebar = ({ role }) => {
 
   return (
     <>
-      {/* Mobile toggle button */}
+      {}
       <button
         className={`m-4 p-2 rounded-md lg:hidden z-50 relative transition-colors
           ${darkMode ? "bg-darkPrimary text-darkSecondary" : "bg-gray-800 text-white"}`}
@@ -35,7 +35,7 @@ const Sidebar = ({ role }) => {
         <Menu />
       </button>
 
-      {/* Sidebar */}
+      {}
       <div
         className={`fixed top-0 left-0 h-full w-64
           ${darkMode ? "bg-darkCard border-darkMuted text-darkSecondary" : "bg-white border-gray-200 text-secondary"}
