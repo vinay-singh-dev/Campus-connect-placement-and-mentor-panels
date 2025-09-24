@@ -1,47 +1,66 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import Layout from "../../components/Layout";
 import { DarkModeContext } from "../../context/DarkModeContext";
 import { X } from "lucide-react";
-
-const sampleStudents = [
-  {
-    id: 1,
-    name: "Amit Sharma",
-    email: "amit.sharma@example.com",
-    studentId: "CSE2025001",
-    appliedAt: "2025-09-20 10:30 AM",
-    status: "Pending",
-  },
-  {
-    id: 2,
-    name: "Riya Verma",
-    email: "riya.verma@example.com",
-    studentId: "ECE2025012",
-    appliedAt: "2025-09-20 11:15 AM",
-    status: "Pending",
-  },
-  {
-    id: 3,
-    name: "Karan Singh",
-    email: "karan.singh@example.com",
-    studentId: "ME2025045",
-    appliedAt: "2025-09-20 01:05 PM",
-    status: "Pending",
-  },
-];
+import axios from "axios";
 
 const AppliedStudents = () => {
-  const [students, setStudents] = useState(sampleStudents);
+  const [students, setStudents] = useState([]);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const { darkMode } = useContext(DarkModeContext);
 
-  const handleStatusChange = (id, newStatus) => {
-    const updated = students.map((student) =>
-      student.id === id ? { ...student, status: newStatus } : student
-    );
-    setStudents(updated);
-    const changedStudent = updated.find((s) => s.id === id);
-    setSelectedStudent(changedStudent);
+  // ✅ Fetch real data from API
+  const fetchStudents = async () => {
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_URL}/admin/get-students-requests`,
+        { headers: { "ngrok-skip-browser-warning": "true" } }
+      );
+      setStudents(response.data.requests || []); // adjust if backend key differs
+    } catch (error) {
+      console.error("Error fetching students:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchStudents();
+  }, []);
+
+  // ✅ Format Date (Readable: 23 Sep 2025, 08:52 PM)
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    return new Date(dateString).toLocaleString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+  };
+
+  // ✅ Update status via API + update UI
+  const handleStatusChange = async (requestId, newStatus) => {
+    try {
+      await axios.put(
+        `${import.meta.env.VITE_API_URL}/admin/update-students-request-status`,
+        { requestId: requestId, status: newStatus },
+        { headers: { "ngrok-skip-browser-warning": "true" } }
+      );
+
+      // update local state
+      const updated = students.map((student) =>
+        student.request_id === requestId ? { ...student, status: newStatus } : student
+      );
+      setStudents(updated);
+
+      // update modal state if selected
+      if (selectedStudent && selectedStudent.request_id === requestId) {
+        setSelectedStudent({ ...selectedStudent, status: newStatus });
+      }
+    } catch (error) {
+      console.error("Error updating status:", error);
+    }
   };
 
   return (
@@ -56,67 +75,71 @@ const AppliedStudents = () => {
 
       {/* Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {students.map((student) => (
-          <div
-            key={student.id}
-            onClick={() => setSelectedStudent(student)}
-            className={`p-6 rounded-2xl relative border shadow-lg cursor-pointer transition-transform transform hover:scale-105 duration-300 
-              ${darkMode ? "bg-[#1E293B] border-[#334155]" : "bg-white border-gray-200"}`}
-          >
-            {/* Glow */}
+        {students.length > 0 ? (
+          students.map((student) => (
             <div
-              className={`absolute inset-0 rounded-2xl pointer-events-none 
-                ${darkMode
-                  ? "bg-gradient-to-tr from-[#3B82F6]/10 via-transparent to-[#22D3EE]/10"
-                  : "bg-gradient-to-tr from-[#2563EB]/10 via-transparent to-[#9333EA]/10"}`}
-            ></div>
+              key={student.request_id}
+              onClick={() => setSelectedStudent(student)}
+              className={`p-6 rounded-2xl relative border shadow-lg cursor-pointer transition-transform transform hover:scale-105 duration-300 
+                ${darkMode ? "bg-[#1E293B] border-[#334155]" : "bg-white border-gray-200"}`}
+            >
+              {/* Glow */}
+              <div
+                className={`absolute inset-0 rounded-2xl pointer-events-none 
+                  ${darkMode
+                    ? "bg-gradient-to-tr from-[#3B82F6]/10 via-transparent to-[#22D3EE]/10"
+                    : "bg-gradient-to-tr from-[#2563EB]/10 via-transparent to-[#9333EA]/10"}`}
+              ></div>
 
-            <div className="relative z-10">
-              {/* Status Badge */}
-              <span
-                className={`px-3 py-1 mb-2 inline-block text-xs rounded-full font-semibold
-                  ${
-                    student.status === "Approved"
-                      ? "bg-[#4ADE80] text-white"
-                      : student.status === "Rejected"
-                      ? "bg-[#F87171] text-white"
-                      : "bg-[#FACC15] text-black"
+              <div className="relative z-10">
+                {/* Status Badge */}
+                <span
+                  className={`px-3 py-1 mb-2 inline-block text-xs rounded-full font-semibold
+                    ${
+                      student.status === "Approved"
+                        ? "bg-[#4ADE80] text-white"
+                        : student.status === "Rejected"
+                        ? "bg-[#F87171] text-white"
+                        : "bg-[#FACC15] text-black"
+                    }`}
+                >
+                  {student.status}
+                </span>
+
+                <h3
+                  className={`text-lg font-bold ${
+                    darkMode ? "text-white" : "text-gray-900"
                   }`}
-              >
-                {student.status}
-              </span>
-
-              <h3
-                className={`text-lg font-bold ${
-                  darkMode ? "text-white" : "text-gray-900"
-                }`}
-              >
-                {student.name}
-              </h3>
-              <p
-                className={`text-sm ${
-                  darkMode ? "text-gray-400" : "text-gray-600"
-                }`}
-              >
-                {student.email}
-              </p>
-              <p
-                className={`text-sm ${
-                  darkMode ? "text-gray-400" : "text-gray-600"
-                }`}
-              >
-                Student ID: {student.studentId}
-              </p>
-              <p
-                className={`text-sm ${
-                  darkMode ? "text-gray-400" : "text-gray-600"
-                }`}
-              >
-                Applied at: {student.appliedAt}
-              </p>
+                >
+                  {student.student_name}
+                </h3>
+                <p
+                  className={`text-sm ${
+                    darkMode ? "text-gray-400" : "text-gray-600"
+                  }`}
+                >
+                  {student.student_email}
+                </p>
+                <p
+                  className={`text-sm ${
+                    darkMode ? "text-gray-400" : "text-gray-600"
+                  }`}
+                >
+                  Student ID: {student.student_id}
+                </p>
+                <p
+                  className={`text-sm ${
+                    darkMode ? "text-gray-400" : "text-gray-600"
+                  }`}
+                >
+                  Applied at: {formatDate(student.applied_at)}
+                </p>
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        ) : (
+          <p className="text-gray-500 dark:text-gray-400">No applied students yet.</p>
+        )}
       </div>
 
       {/* Modal */}
@@ -147,29 +170,19 @@ const AppliedStudents = () => {
             </h3>
 
             <div className="space-y-3">
-              <p
-                className={`${darkMode ? "text-gray-300" : "text-gray-700"}`}
-              >
-                <strong>Name:</strong> {selectedStudent.name}
+              <p className={`${darkMode ? "text-gray-300" : "text-gray-700"}`}>
+                <strong>Name:</strong> {selectedStudent.student_name}
               </p>
-              <p
-                className={`${darkMode ? "text-gray-300" : "text-gray-700"}`}
-              >
-                <strong>Email:</strong> {selectedStudent.email}
+              <p className={`${darkMode ? "text-gray-300" : "text-gray-700"}`}>
+                <strong>Email:</strong> {selectedStudent.student_email}
               </p>
-              <p
-                className={`${darkMode ? "text-gray-300" : "text-gray-700"}`}
-              >
-                <strong>Student ID:</strong> {selectedStudent.studentId}
+              <p className={`${darkMode ? "text-gray-300" : "text-gray-700"}`}>
+                <strong>Student ID:</strong> {selectedStudent.student_id}
               </p>
-              <p
-                className={`${darkMode ? "text-gray-300" : "text-gray-700"}`}
-              >
-                <strong>Applied At:</strong> {selectedStudent.appliedAt}
+              <p className={`${darkMode ? "text-gray-300" : "text-gray-700"}`}>
+                <strong>Applied At:</strong> {formatDate(selectedStudent.applied_at)}
               </p>
-              <p
-                className={`${darkMode ? "text-gray-300" : "text-gray-700"}`}
-              >
+              <p className={`${darkMode ? "text-gray-300" : "text-gray-700"}`}>
                 <strong>Status:</strong>{" "}
                 <span
                   className={`px-3 py-1 text-xs rounded-full font-semibold
@@ -198,7 +211,7 @@ const AppliedStudents = () => {
               <select
                 value={selectedStudent.status}
                 onChange={(e) =>
-                  handleStatusChange(selectedStudent.id, e.target.value)
+                  handleStatusChange(selectedStudent.request_id, e.target.value)
                 }
                 className={`px-3 py-2 rounded-lg border w-full font-medium
                   ${

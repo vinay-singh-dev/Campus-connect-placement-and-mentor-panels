@@ -66,7 +66,7 @@ const AdminApplications = () => {
     try {
       
       await axios.put(
-        "https://fb2e398f1311.ngrok-free.app/api/admin/update-application-status",
+        `${import.meta.env.VITE_API_URL}/admin/update-application-status`,
         { application_id: applicationId, status: newStatus },
         { headers: { "ngrok-skip-browser-warning": "true" } }
       );
