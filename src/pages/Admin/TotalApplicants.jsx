@@ -6,13 +6,13 @@ import { X } from "lucide-react";
 
 const AdminApplications = () => {
   const [applications, setApplications] = useState([]);
-  const [selectedCard, setSelectedCard] = useState(null);
   const [selectedAppDetails, setSelectedAppDetails] = useState(null);
   const { darkMode } = useContext(DarkModeContext);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 
-  6;
+  const itemsPerPage = 6;
+
+  const statusOptions = ["Applied", "Under Review", "Interview", "Selected", "Rejected"];
 
   const getApplications = async () => {
     try {
@@ -49,7 +49,6 @@ const AdminApplications = () => {
   };
 
   const handleCardClick = (appId) => {
-    setSelectedCard(appId);
     getApplicationDetails(appId);
   };
 
@@ -61,22 +60,20 @@ const AdminApplications = () => {
     currentPage * itemsPerPage
   );
 
-  
   const handleStatusChange = async (applicationId, newStatus) => {
     try {
-      
       await axios.put(
         `${import.meta.env.VITE_API_URL}/admin/update-application-status`,
         { application_id: applicationId, status: newStatus },
         { headers: { "ngrok-skip-browser-warning": "true" } }
       );
 
-     
       setApplications((prev) =>
         prev.map((app) =>
           app.id === applicationId ? { ...app, status: newStatus } : app
         )
       );
+
       if (selectedAppDetails && selectedAppDetails.application_id === applicationId) {
         setSelectedAppDetails({ ...selectedAppDetails, status: newStatus });
       }
@@ -85,7 +82,22 @@ const AdminApplications = () => {
     }
   };
 
-  const statusOptions = ["Applied", "Under Review", "Interview", "Selected", "Rejected"];
+  const getGradientByStatus = (status) => {
+    switch(status) {
+      case "Selected":
+        return darkMode 
+          ? "from-[#22c55e]/20 via-transparent to-[#16a34a]/20"
+          : "from-[#a7f3d0]/20 via-transparent to-[#22c55e]/20";
+      case "Rejected":
+        return darkMode 
+          ? "from-[#ef4444]/20 via-transparent to-[#b91c1c]/20"
+          : "from-[#fecaca]/20 via-transparent to-[#ef4444]/20";
+      default:
+        return darkMode 
+          ? "from-[#facc15]/20 via-transparent to-[#ca8a04]/20"
+          : "from-[#fde68a]/20 via-transparent to-[#fbbf24]/20";
+    }
+  };
 
   return (
     <Layout role="admin">
@@ -101,14 +113,10 @@ const AdminApplications = () => {
             <div
               key={app.id}
               onClick={() => handleCardClick(app.id)}
-              className={`relative p-8 rounded-xl cursor-pointer overflow-hidden transition-transform hover:scale-105 hover:shadow-xl duration-300 ${
-                darkMode ? "bg-[#1e293b] border border-[#334155]" : "bg-[#ecfeff] border border-[#e2e8f0]"
-              }`}
+              className={`relative p-8 rounded-xl cursor-pointer overflow-hidden transition-transform hover:scale-105 hover:shadow-xl duration-300 ${darkMode ? "bg-[#1e293b] border border-[#334155]" : "bg-[#ecfeff] border border-[#e2e8f0]"}`}
               style={{ minHeight: "220px" }}
             >
-              <div className={`absolute inset-0 pointer-events-none rounded-xl opacity-70 ${
-                darkMode ? "bg-gradient-to-tr from-[#0ea5e9]/10 via-transparent to-[#f59e0b]/10" : "bg-gradient-to-tr from-[#164e63]/10 via-transparent to-[#d97706]/10"
-              }`}></div>
+              <div className={`absolute inset-0 pointer-events-none rounded-xl opacity-70 bg-gradient-to-tr ${getGradientByStatus(app.status)}`}></div>
 
               <div className="relative z-10">
                 <div className="flex justify-between items-start mb-3">
@@ -133,21 +141,23 @@ const AdminApplications = () => {
         )}
       </div>
 
-      {}
-
-      {selectedCard !== null && selectedAppDetails && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={() => setSelectedCard(null)}>
+      {/* Fullscreen Scrollable Modal */}
+      {selectedAppDetails && (
+        <div className="fixed inset-0 z-50 flex items-start justify-center overflow-auto bg-black/60 p-4">
           <div
-            className={`rounded-xl shadow-xl w-full max-w-2xl p-6 relative ${darkMode ? "bg-[#1e293b] border border-[#334155]" : "bg-white border border-[#e2e8f0]"}`}
-            onClick={(e) => e.stopPropagation()}
+            className={`relative rounded-xl shadow-xl w-full max-w-5xl p-6 mt-12 mb-12 ${darkMode ? "bg-[#1e293b] border border-[#334155]" : "bg-white border border-[#e2e8f0]"}`}
           >
-            <button onClick={() => setSelectedCard(null)} className="absolute top-4 right-4 text-gray-400 hover:text-red-400">
+            {/* Sticky Close Button */}
+            <button 
+              onClick={() => setSelectedAppDetails(null)} 
+              className="absolute top-2 right-2 z-50 text-gray-400 hover:text-red-400 bg-white/20 dark:bg-black/20 p-1 rounded-full"
+            >
               <X size={22} />
             </button>
 
-            <div className="space-y-4">
+            <div className="space-y-4 max-h-[80vh] overflow-y-auto pr-2 pt-6">
               <div className="flex justify-between items-center">
-                <h3 className={`text-xl font-bold font-space ${darkMode ? "text-white" : "text-gray-900"}`}>
+                <h3 className={`text-2xl font-bold font-space ${darkMode ? "text-white" : "text-gray-900"}`}>
                   {selectedAppDetails.student_name}
                 </h3>
                 <span className={`px-3 py-1 text-xs rounded-full font-semibold ${

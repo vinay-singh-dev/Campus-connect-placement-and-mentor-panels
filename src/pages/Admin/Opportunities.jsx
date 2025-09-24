@@ -9,6 +9,7 @@ const AdminOpportunities = () => {
 
   const [opportunities, setOpportunities] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
+  const [deleteConfirmIndex, setDeleteConfirmIndex] = useState(null); // For custom delete confirmation
   const [selectedCard, setSelectedCard] = useState(null);
   const [form, setForm] = useState({
     job_type: "",
@@ -78,18 +79,27 @@ const AdminOpportunities = () => {
     }
 
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/admin/job-post`,
-        form,
-        { headers: { "ngrok-skip-browser-warning": "true" } }
-      );
-
       if (editingIndex !== null) {
+        const jobToUpdate = opportunities[editingIndex];
+        console.log(jobToUpdate);
+        
+        await axios.put( 
+        
+          `${import.meta.env.VITE_API_URL}/admin/edit-post`,
+          { ...form, jobId: jobToUpdate.id || jobToUpdate.id || jobToUpdate.job_id },
+          { headers: { "ngrok-skip-browser-warning": "true" } }
+        );
+        
         const updated = [...opportunities];
         updated[editingIndex] = { ...form, status: "Live" };
         setOpportunities(updated);
         setEditingIndex(null);
       } else {
+        await axios.post(
+          `${import.meta.env.VITE_API_URL}/admin/job-post`,
+          form,
+          { headers: { "ngrok-skip-browser-warning": "true" } }
+        );
         setOpportunities([...opportunities, { ...form, status: "Live" }]);
       }
 
@@ -103,12 +113,13 @@ const AdminOpportunities = () => {
         details: "",
         deadline: "",
         duration: "",
-        compensationType: "Salary",
+        compensationType: "salary",
         compensationAmount: "",
       });
       setModalOpen(false);
     } catch (error) {
       console.error(error);
+      alert("Failed to save opportunity.");
     }
   };
 
@@ -131,8 +142,29 @@ const AdminOpportunities = () => {
   };
 
   const handleDelete = (index) => {
-    const updated = opportunities.filter((_, i) => i !== index);
-    setOpportunities(updated);
+    setDeleteConfirmIndex(index); // Open custom confirmation modal
+  };
+
+  const confirmDelete = async () => {
+    const index = deleteConfirmIndex;
+    if (index === null) return;
+
+    const job = opportunities[index];
+    try {
+      await axios.delete(
+        `${import.meta.env.VITE_API_URL}/admin/delete-post/${job.id}`,
+        {
+          headers: { "ngrok-skip-browser-warning": "true" },
+          params: { job_id: job._id || job.id || job.job_id },
+        }
+      );
+      const updated = opportunities.filter((_, i) => i !== index);
+      setOpportunities(updated);
+      setDeleteConfirmIndex(null);
+    } catch (error) {
+      console.error(error);
+      alert("Failed to delete opportunity.");
+    }
   };
 
   useEffect(() => {
@@ -157,6 +189,7 @@ const AdminOpportunities = () => {
         </button>
       </div>
 
+      {/* Create/Edit Modal */}
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
           <div
@@ -212,7 +245,9 @@ const AdminOpportunities = () => {
                   onChange={handleChange}
                   placeholder={field.replace(/([A-Z])/g, " $1")}
                   className={`border p-2 rounded ${
-                    darkMode ? "bg-[#0f172a] text-gray-200 border border-[#334155]" : "bg-gray-100 text-gray-900 border border-[#e2e8f0]"
+                    darkMode
+                      ? "bg-[#0f172a] text-gray-200 border border-[#334155]"
+                      : "bg-gray-100 text-gray-900 border border-[#e2e8f0]"
                   } focus:ring-2 ${darkMode ? "focus:ring-[#0ea5e9]" : "focus:ring-[#164e63]"}`}
                 />
               ))}
@@ -222,7 +257,9 @@ const AdminOpportunities = () => {
                 value={form.compensationType}
                 onChange={handleChange}
                 className={`border p-2 rounded ${
-                  darkMode ? "bg-[#0f172a] text-gray-200 border border-[#334155]" : "bg-gray-100 text-gray-900 border border-[#e2e8f0]"
+                  darkMode
+                    ? "bg-[#0f172a] text-gray-200 border border-[#334155]"
+                    : "bg-gray-100 text-gray-900 border border-[#e2e8f0]"
                 } focus:ring-2 ${darkMode ? "focus:ring-[#0ea5e9]" : "focus:ring-[#164e63]"}`}
               >
                 <option value="salary">Salary</option>
@@ -235,7 +272,9 @@ const AdminOpportunities = () => {
                 onChange={handleChange}
                 placeholder="Job Description"
                 className={`border p-2 rounded col-span-2 ${
-                  darkMode ? "bg-[#0f172a] text-gray-200 border border-[#334155]" : "bg-gray-100 text-gray-900 border border-[#e2e8f0]"
+                  darkMode
+                    ? "bg-[#0f172a] text-gray-200 border border-[#334155]"
+                    : "bg-gray-100 text-gray-900 border border-[#e2e8f0]"
                 } focus:ring-2 ${darkMode ? "focus:ring-[#0ea5e9]" : "focus:ring-[#164e63]"}`}
               />
               <textarea
@@ -244,7 +283,9 @@ const AdminOpportunities = () => {
                 onChange={handleChange}
                 placeholder="Requirements"
                 className={`border p-2 rounded col-span-2 ${
-                  darkMode ? "bg-[#0f172a] text-gray-200 border border-[#334155]" : "bg-gray-100 text-gray-900 border border-[#e2e8f0]"
+                  darkMode
+                    ? "bg-[#0f172a] text-gray-200 border border-[#334155]"
+                    : "bg-gray-100 text-gray-900 border border-[#e2e8f0]"
                 } focus:ring-2 ${darkMode ? "focus:ring-[#0ea5e9]" : "focus:ring-[#164e63]"}`}
               />
               <textarea
@@ -253,7 +294,9 @@ const AdminOpportunities = () => {
                 onChange={handleChange}
                 placeholder="Additional Details"
                 className={`border p-2 rounded col-span-2 ${
-                  darkMode ? "bg-[#0f172a] text-gray-200 border border-[#334155]" : "bg-gray-100 text-gray-900 border border-[#e2e8f0]"
+                  darkMode
+                    ? "bg-[#0f172a] text-gray-200 border border-[#334155]"
+                    : "bg-gray-100 text-gray-900 border border-[#e2e8f0]"
                 } focus:ring-2 ${darkMode ? "focus:ring-[#0ea5e9]" : "focus:ring-[#164e63]"}`}
               />
 
@@ -268,6 +311,7 @@ const AdminOpportunities = () => {
         </div>
       )}
 
+      {/* Opportunities Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {opportunities.length === 0 ? (
           <p className="text-gray-400">No opportunities posted yet.</p>
@@ -291,13 +335,15 @@ const AdminOpportunities = () => {
 
               <div className="relative z-10">
                 <div className="flex justify-between items-start mb-3">
-                  <span className={`px-3 py-1 text-xs rounded-full font-semibold ${
-                    job.status === "Live"
-                      ? "bg-[#4ADE80] text-white"
-                      : job.status === "Expired"
-                      ? "bg-[#F87171] text-white"
-                      : "bg-[#FACC15] text-black"
-                  }`}>
+                  <span
+                    className={`px-3 py-1 text-xs rounded-full font-semibold ${
+                      job.status === "Live"
+                        ? "bg-[#4ADE80] text-white"
+                        : job.status === "Expired"
+                        ? "bg-[#F87171] text-white"
+                        : "bg-[#FACC15] text-black"
+                    }`}
+                  >
                     {job.status}
                   </span>
                   <span className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
@@ -308,16 +354,12 @@ const AdminOpportunities = () => {
                 <h3 className={`text-xl font-bold font-space ${darkMode ? "text-white" : "text-gray-900"}`}>
                   {job.title}
                 </h3>
-                <p className={`text-base mt-1 ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
-                  {job.job_role}
-                </p>
-                <p className={`text-sm mt-1 ${darkMode ? "text-gray-500" : "text-gray-700"}`}>
-                  {job.location}
-                </p>
+                <p className={`text-base mt-1 ${darkMode ? "text-gray-400" : "text-gray-600"}`}>{job.job_role}</p>
+                <p className={`text-sm mt-1 ${darkMode ? "text-gray-500" : "text-gray-700"}`}>{job.location}</p>
 
                 <div className="flex flex-wrap gap-2 mt-2 text-sm">
                   <span className="px-2 py-1 rounded-full bg-white text-blue-700 font-semibold">
-                    {job.compensationType}: ₹{!job.salary?job.stipend:job.salary}
+                    {!job.salary?"stipend":"salary"}: ₹{!job.salary?job.stipend:job.salary}
                   </span>
                   <span className="px-2 py-1 rounded-full bg-white text-blue-700 font-semibold">
                     Type: {job.job_type}
@@ -357,6 +399,36 @@ const AdminOpportunities = () => {
         )}
       </div>
 
+      {/* Delete Confirmation Modal */}
+      {deleteConfirmIndex !== null && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+          <div
+            className={`rounded-xl shadow-xl w-full max-w-sm p-6 relative flex flex-col items-center gap-4 ${
+              darkMode ? "bg-[#1e293b] border border-[#334155]" : "bg-white border border-[#e2e8f0]"
+            }`}
+          >
+            <p className={`${darkMode ? "text-white" : "text-gray-900"} text-center`}>
+              Are you sure you want to delete this opportunity?
+            </p>
+            <div className="flex gap-4 w-full">
+              <button
+                onClick={confirmDelete}
+                className="flex-1 py-2 rounded-lg border border-red-500 text-red-500 hover:bg-red-100 transition"
+              >
+                Yes
+              </button>
+              <button
+                onClick={() => setDeleteConfirmIndex(null)}
+                className="flex-1 py-2 rounded-lg border border-green-500 text-green-500 hover:bg-green-100 transition"
+              >
+                No
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Selected Card Modal */}
       {selectedCard !== null && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
@@ -380,13 +452,15 @@ const AdminOpportunities = () => {
               return (
                 <div className="space-y-4">
                   <div className="flex justify-between items-start mb-3">
-                    <span className={`px-3 py-1 text-xs rounded-full font-semibold ${
-                      job.status === "Live"
-                        ? "bg-[#4ADE80] text-white"
-                        : job.status === "Expired"
-                        ? "bg-[#F87171] text-white"
-                        : "bg-[#FACC15] text-black"
-                    }`}>
+                    <span
+                      className={`px-3 py-1 text-xs rounded-full font-semibold ${
+                        job.status === "Live"
+                          ? "bg-[#4ADE80] text-white"
+                          : job.status === "Expired"
+                          ? "bg-[#F87171] text-white"
+                          : "bg-[#FACC15] text-black"
+                      }`}
+                    >
                       {job.status}
                     </span>
                     <span className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
@@ -397,12 +471,8 @@ const AdminOpportunities = () => {
                   <h3 className={`text-xl font-bold font-space ${darkMode ? "text-white" : "text-gray-900"}`}>
                     {job.title}
                   </h3>
-                  <p className={`text-base mt-1 ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
-                    {job.job_role}
-                  </p>
-                  <p className={`text-sm mt-1 ${darkMode ? "text-gray-500" : "text-gray-700"}`}>
-                    {job.location}
-                  </p>
+                  <p className={`text-base mt-1 ${darkMode ? "text-gray-400" : "text-gray-600"}`}>{job.job_role}</p>
+                  <p className={`text-sm mt-1 ${darkMode ? "text-gray-500" : "text-gray-700"}`}>{job.location}</p>
 
                   <div className="flex flex-wrap gap-2 mt-2 text-sm">
                     <span className="px-2 py-1 rounded-full bg-white text-blue-700 font-semibold">
@@ -421,9 +491,15 @@ const AdminOpportunities = () => {
                   </div>
 
                   <div className={`mt-4 space-y-2 ${darkMode ? "text-gray-200" : "text-gray-800"} text-sm`}>
-                    <p><strong>Description:</strong> {job.description}</p>
-                    <p><strong>Requirements:</strong> {job.requirements}</p>
-                    <p><strong>Additional Details:</strong> {job.details}</p>
+                    <p>
+                      <strong>Description:</strong> {job.description}
+                    </p>
+                    <p>
+                      <strong>Requirements:</strong> {job.requirements}
+                    </p>
+                    <p>
+                      <strong>Additional Details:</strong> {job.details}
+                    </p>
                   </div>
                 </div>
               );
